@@ -1,11 +1,8 @@
-using Flux
-using Yao
+layerX(nbit::Integer) = chain(nbit, put(i=>Rx(0)) for i = 1:nbit)
+layerZ(nbit::Integer) = chain(nbit, put(i=>Rz(0)) for i = 1:nbit)
+entangler(pairs::Array{Pair{T,T},1} where T) = chain(control(ctrl, target=>X) for (ctrl, target) in pairs)
 
-layerX(nbit::Int) = chain(nbit, put(i=>Rx(0)) for i = 1:nbit)
-layerZ(nbit::Int) = chain(nbit, put(i=>Rz(0)) for i = 1:nbit)
-entangler(pairs) = chain(control(ctrl, target=>X) for (ctrl, target) in pairs)
-
-function build_circuit(n, l1, l2, pairs)
+function build_circuit(n::Integer, l1::Integer, l2::Integer, pairs::Array{Pair{T,T},1} where T)
 		circuit = chain(n)
 
 		push!(circuit, layerX(n))
@@ -55,7 +52,7 @@ function build_circuit_2(n, l1, pairs)
 		return circuit
 end
 
-function build_circuit(n, l1, l2)
+function build_circuit(n::Integer, l1::Integer, l2::Integer)
 	pairs = [i => i+1 for i = 1:(n-1)]
 	return build_circuit(n, l1, l2, pairs)
 end

@@ -1,5 +1,7 @@
 module QDNN
 
-greet() = print("Hello World!")
+using Yao
+
+include("layer.jl")
 
 end # module

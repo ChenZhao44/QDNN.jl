@@ -3,6 +3,9 @@ uuid = "97dc67d0-8bf9-4884-aa4f-e712ebca90f5"
 authors = ["Chen Zhao"]
 version = "0.1.0"
 
+[deps]
+Yao = "5872b779-8223-5990-8dd0-5abbb0748c8c"
+
 [compat]
 julia = "1.2"
 
