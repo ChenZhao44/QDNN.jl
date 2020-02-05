@@ -4,6 +4,8 @@ authors = ["Chen Zhao"]
 version = "0.1.0"
 
 [deps]
+Flux = "587475ba-b771-5e3f-ad9e-33799f191a9c"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 Yao = "5872b779-8223-5990-8dd0-5abbb0748c8c"
 
 [compat]

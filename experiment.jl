@@ -20,46 +20,29 @@ end
 
 nData = size(data_y,1)
 
-using Flux
+using QDNN
+using Yao
 
-include("layer.jl")
-
-W1 = (rand(160) .- 0.5) * 2π
 n1 = 8
-pairs1 = [i => i+1 for i = 1:n1-1]
-push!(pairs1, n1 => 1)
+ql_1 = QNNL{Float64}(8, 8, 20, "XYZ")
 
-b2 = rand(24) .- 0.5
-W2 = (rand(96) .- 0.5) * 2π
 n2 = 6
-pairs2 = [i => i+1 for i = 1:n2-1]
-push!(pairs2, n2 => 1)
+ql_2 = QNNL{Float64}(6, 4, 16, "YZ")
 
-b3 = rand(12) .- 0.5
-W3 = (rand(28) .- 0.5) * 2π
 n3 = 4
-pairs3 = [i => i+1 for i = 1:n3-1]
-push!(pairs3, n3 => 1)
-
-cir_1 = build_circuit(n1, 8, 20, pairs1);
-cir_2 = build_circuit(n2, 4, 16, pairs2);
-cir_3 = build_circuit(n3, 3, 7, pairs3);
-
-H1_X = [put(n1, i=>X) for i = 1:n1]
-H1_Y = [put(n1, i=>Y) for i = 1:n1]
-H1_Z = [put(n1, i=>Z) for i = 1:n1]
-Hami_1 = [H1_X; H1_Y; H1_Z]
-
-H2_Y = [put(n2, i=>Y) for i = 1:n2]
-H2_Z = [put(n2, i=>Z) for i = 1:n2]
-Hami_2 = [H2_Y; H2_Z];
-
 H3 = [Array{ComplexF64,2}(zeros(2,2)) for i = 1:2]
 for i = 1:2
     H3[i][i,i] = 1
 end
-
 Hami_3 = [concentrate(4, matblock(H3[i]), (1)) for i = 1:2];
+ql_3 = QNNL{Float64}(4, 3, 7, Hami_3; no_bias = true)
+
+layers = [ql_1, ql_2, ql_3]
+qm = QDNNModel(layers, f)
+
+x = rand(64)
+ZZ = forward(qm, x)
+bp = back_propagation(model, x, [0, 1.0])
 
 using FileIO
 
