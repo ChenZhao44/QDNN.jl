@@ -1,13 +1,14 @@
 using LinearAlgebra
+using Yao
 
 include("circuit.jl")
 
 export QNNL, forward, back_propagation
 export Layer
 
-abstract type Layer end
+abstract type Layer{T} end
 
-struct QNNL{T} <: Layer
+struct QNNL{T} <: Layer{T}
 	encoder::YaoBlocks.ChainBlock
 	transform::YaoBlocks.ChainBlock
 	params::Array{T}
