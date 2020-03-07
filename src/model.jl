@@ -41,34 +41,38 @@ function back_propagation(model::QDNNModel{T}, x::Array{T}, L_y::Array{T}) where
     return grad
 end
 
-function MSE(y1::Vector{T}, y2::Vector{T}) where {T}
-    n = size(y1, 1)
-    return sum((y1-y2).^2)/n, 2/n .* (y1-y2)
+# function MSE(y1::Vector{T}, y2::Vector{T}) where {T}
+#     n = size(y1, 1)
+#     return sum((y1-y2).^2)/n, 2/n .* (y1-y2)
+# end
+
+function SSE(y1::Vector{T}, y2::Vector{T}) where {T}
+    return sum((y1-y2).^2), 2 .* (y1-y2)
 end
 
 function loss(qm::QDNNModel{T}, x::Vector{T}, y::Vector{T}) where {T}
     fwd = forward(qm, x)
     y_p = fwd[end]
-    l, L_y = MSE(y_p, y)
+    l, L_y = SSE(y_p, y)
     return l
 end
 
 function loss(qm::QDNNModel{T}, data_x::Vector{Vector{T}}, data_y::Vector{Vector{T}}) where {T}
     nData = size(data_x, 1)
-    l = 0
+    l = zeros(nData)
     for i = 1:nData
         x = data_x[i]
         y = data_y[i]
         l_x = loss(qm, x, y)
-        l += l_x
+        l[i] = l_x
     end
-    return l/nData
+    return l
 end
 
 function get_gradient(qm::QDNNModel{T}, x::Vector{T}, y::Vector{T}) where {T}
     fwd = forward(qm, x)
     y_p = fwd[end]
-    l, L_y = MSE(y_p, y)
+    l, L_y = SSE(y_p, y)
 
     grad = back_propagation(qm, x, L_y)
     return grad
