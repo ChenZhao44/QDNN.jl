@@ -7,15 +7,9 @@ entangler(pairs::Array{Pair{T,T},1} where T) = chain(control(ctrl, target=>X) fo
 function encoder_circuit(n::Integer, l::Integer, pairs::Array{Pair{T,T},1} where T)
 	circuit = chain(n)
 
-	if l >= 1
-		push!(circuit, layerX(n))
-	end
-	if l >= 2
-		push!(circuit, layerZ(n))
-	end
-	for i in 3:l
+	for i in 1:l
 			if i%3 == 0
-					push!(circuit, entangler(pairs))
+				push!(circuit, entangler(pairs))
 			end
 			if i%3 == 1
 					push!(circuit, layerX(n))
@@ -23,7 +17,6 @@ function encoder_circuit(n::Integer, l::Integer, pairs::Array{Pair{T,T},1} where
 					push!(circuit, layerZ(n))
 			end
 	end
-	push!(circuit, entangler(pairs))
 
 	return circuit
 end
@@ -37,14 +30,14 @@ end
 function transform_circuit(n::Integer, l::Integer, pairs::Array{Pair{T,T},1} where T)
 	circuit = chain(n)
 	for i in 1:l
-			if i%3 == 2
-					push!(circuit, layerX(n))
-			else
-					push!(circuit, layerZ(n))
-			end
-			if i%3 == 0 && i != l
-					push!(circuit, entangler(pairs))
-			end
+		if i%3 == 1 && i != l
+			push!(circuit, entangler(pairs))
+		end
+		if i%3 == 2
+			push!(circuit, layerX(n))
+		else
+			push!(circuit, layerZ(n))
+		end
 	end
 	return circuit
 end
